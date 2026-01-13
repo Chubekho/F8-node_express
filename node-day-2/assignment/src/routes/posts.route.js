@@ -11,6 +11,6 @@ router.post("/", postsController.createOne);
 // [PUT] /api/posts/:id
 router.put("/:id", postsController.editOne);
 // [DELETE] /api/posts/:id
-router.delete("/:id", postsController.delOne);
+router.delete("/:id", postsController.deleteOne);
 
 module.exports = router;

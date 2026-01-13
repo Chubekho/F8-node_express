@@ -17,7 +17,7 @@ const postModel = {
     return db.find((post) => post.id === id);
   },
 
-  async create(data) {
+  async insertOne(data) {
     const db = await loadDB("post");
     const newPost = {
       id: getNextId(db),
@@ -31,7 +31,7 @@ const postModel = {
     return newPost;
   },
 
-  async editOne(id, data) {
+  async updateOne(id, data) {
     const db = await loadDB("post");
     const index = db.findIndex((post) => post.id === id);
 
@@ -48,14 +48,13 @@ const postModel = {
     return updatedPost;
   },
 
-  async delOne(id) {
+  async deleleOne(id) {
     const db = await loadDB("post");
     const index = db.findIndex(post => post.id === id);
     
     if (index === -1) return null;
 
-    const deletedPost = db[index];
-    db.splice(index, 1);
+    const deletedPost = db.splice(index, 1);
     await saveDB("post", db);
     return deletedPost;
   },
