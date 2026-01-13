@@ -11,6 +11,6 @@ router.post("/", commentsController.createOne);
 // [PUT] /api/comments/:id
 router.put("/:id", commentsController.editOne);
 // [DELETE] /api/comments/:id
-router.delete("/:id", commentsController.delOne);
+router.delete("/:id", commentsController.deleteOne);
 
 module.exports = router;
