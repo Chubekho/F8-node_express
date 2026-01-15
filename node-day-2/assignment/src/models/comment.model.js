@@ -17,7 +17,7 @@ const commentModel = {
     return db.find((_comment) => _comment.id === id);
   },
 
-  async updateOne(data) {
+  async insertOne(data) {
     const db = await loadDB("comment");
     const newComment = {
       id: getNextId(db),

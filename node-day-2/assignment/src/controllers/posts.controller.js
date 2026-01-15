@@ -17,7 +17,7 @@ const getOne = async (req, res) => {
 
 const createOne = async (req, res) => {
   const { title, content } = req.body;
-  const newPost = await postModel.create({ title, content });
+  const newPost = await postModel.insertOne({ title, content });
   res.status(201).json(newPost);
 };
 
@@ -25,7 +25,7 @@ const editOne = async (req, res) => {
   const id = +req.params.id;
   const { title, content } = req.body;
 
-  const updatedPost = await postModel.editOne(id, { title, content });
+  const updatedPost = await postModel.updateOne(id, { title, content });
 
   if (!updatedPost) {
     return res.status(404).json({ message: "Post not found!" });
@@ -34,9 +34,9 @@ const editOne = async (req, res) => {
   res.status(200).json(updatedPost);
 };
 
-const delOne = async (req, res) => {
+const deleteOne = async (req, res) => {
   const id = +req.params.id;
-  const deletedPost = await postModel.delOne(id);
+  const deletedPost = await postModel.deleteOne(id);
   
   if (!deletedPost) {
     return res.status(404).json({ message: "Post not found!" });
@@ -44,4 +44,4 @@ const delOne = async (req, res) => {
   res.status(204).end();
 };
 
-module.exports = { getAll, getOne, createOne, editOne, delOne };
+module.exports = { getAll, getOne, createOne, editOne, deleteOne };
