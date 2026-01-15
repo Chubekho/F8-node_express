@@ -48,7 +48,7 @@ const postModel = {
     return updatedPost;
   },
 
-  async deleleOne(id) {
+  async deleteOne(id) {
     const db = await loadDB("post");
     const index = db.findIndex(post => post.id === id);
     
