@@ -48,14 +48,13 @@ const postModel = {
     return updatedPost;
   },
 
-  async deleteOne(id) {
+  async deleleOne(id) {
     const db = await loadDB("post");
     const index = db.findIndex(post => post.id === id);
     
     if (index === -1) return null;
 
-    const deletedPost = db[index];
-    db.splice(index, 1);
+    const deletedPost = db.splice(index, 1);
     await saveDB("post", db);
     return deletedPost;
   },
