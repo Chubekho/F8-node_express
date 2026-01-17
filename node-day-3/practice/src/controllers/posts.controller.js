@@ -2,7 +2,7 @@ const postModel = require("../models/post.model");
 
 const getAll = async (req, res) => {
   const posts = await postModel.findAll();
-  res.status(200).json(posts);
+  res.success(posts);
 };
 
 const getOne = async (req, res) => {
@@ -10,15 +10,15 @@ const getOne = async (req, res) => {
   const post = await postModel.findOne(id);
 
   if (!post) {
-    return res.status(404).json({ message: "Post not found" });
+    return res.error({ message: "Post not found" }, 404);
   }
-  res.status(200).json(post);
+  res.success(post);
 };
 
 const createOne = async (req, res) => {
   const { title, content } = req.body;
   const newPost = await postModel.insertOne({ title, content });
-  res.status(201).json(newPost);
+  res.success(newPost, 201);
 };
 
 const editOne = async (req, res) => {
@@ -28,20 +28,20 @@ const editOne = async (req, res) => {
   const updatedPost = await postModel.updateOne(id, { title, content });
 
   if (!updatedPost) {
-    return res.status(404).json({ message: "Post not found!" });
+    return res.error({ message: "Post not found" }, 404);
   }
 
-  res.status(200).json(updatedPost);
+  res.success(updatedPost);
 };
 
 const deleteOne = async (req, res) => {
   const id = +req.params.id;
   const deletedPost = await postModel.deleteOne(id);
-  
+
   if (!deletedPost) {
-    return res.status(404).json({ message: "Post not found!" });
+    return res.error({ message: "Post not found" }, 404);
   }
-  res.status(204).end();
+  res.success(null, 204);
 };
 
 module.exports = { getAll, getOne, createOne, editOne, deleteOne };
