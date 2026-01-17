@@ -16,8 +16,8 @@ const getOne = async (req, res) => {
 };
 
 const createOne = async (req, res) => {
-  const { title, content } = req.body;
-  const newPost = await postModel.insertOne({ title, content });
+  const { title, slug, description, content } = req.body;
+  const newPost = await postModel.insertOne({ title, slug, description, content });
   res.success(newPost, 201);
 };
 

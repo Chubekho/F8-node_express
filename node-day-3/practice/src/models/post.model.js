@@ -1,34 +1,24 @@
 const { loadDB, saveDB } = require("../utils/jsonDB");
-
-const getNextId = (posts) => {
-  if (posts.length === 0) return 1;
-  const ids = posts.map((p) => p.id);
-  return Math.max(...ids) + 1;
-};
+const pool = require("../config/database");
 
 const postModel = {
   async findAll() {
-    const db = await loadDB("post");
-    return db;
+    const [rows] = await pool.query("SELECT * FROM posts")
+    return rows;
   },
 
   async findOne(id) {
-    const db = await loadDB("post");
-    return db.find((post) => post.id === id);
+    const [rows] = await pool.query(`select * from posts where id = ${id}`);
+    return rows[0]
   },
 
   async insertOne(data) {
-    const db = await loadDB("post");
-    const newPost = {
-      id: getNextId(db),
-      title: data.title,
-      content: data.content,
-      createdAt: new Date().toISOString(),
-    };
-
-    db.push(newPost);
-    await saveDB("post", db);
-    return newPost;
+    try {
+      const result = await pool.query(`INSERT INTO posts (title, slug, description, content) VALUES ("${data.title}", "${data.slug}", "${data.description}", "${data.content}");`)
+      return result;
+    } catch(e) {
+      throw new Error(e)
+    }
   },
 
   async updateOne(id, data) {
@@ -50,8 +40,8 @@ const postModel = {
 
   async deleteOne(id) {
     const db = await loadDB("post");
-    const index = db.findIndex(post => post.id === id);
-    
+    const index = db.findIndex((post) => post.id === id);
+
     if (index === -1) return null;
 
     const deletedPost = db.splice(index, 1);
