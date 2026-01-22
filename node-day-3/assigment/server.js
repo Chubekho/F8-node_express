@@ -6,6 +6,9 @@ const {
   apiRateLimiter,
   createRateLimiter,
 } = require("./src/middleware/rateLimiter");
+
+const appRoute = require("./src/routes");
+
 const port = 3000;
 
 const app = express();
@@ -15,6 +18,7 @@ app.use(responseFormat);
 app.use(apiRateLimiter);
 
 //apply route
+app.use("/api", appRoute);
 app.get(
   "/test-success",
   createRateLimiter({
