@@ -1,23 +1,35 @@
 const pool = require("../config/database");
 
 const postModel = {
-  async findAll() {
-    const [rows] = await pool.query("SELECT * FROM posts")
+  async findAll(limit, offset) {
+    
+    const [rows] = await pool.query(
+      "SELECT * FROM posts limit ? offset ?",
+      [limit, offset],
+    );
     return rows;
   },
 
   async findOne(id) {
-    const [rows] = await pool.query(`select * from posts where id = ${id}`);
-    return rows[0]
+    const [rows] = await pool.query("select * from posts where id = ?", [id]);
+    return rows[0];
   },
 
   async insertOne(data) {
     try {
-      const result = await pool.query(`INSERT INTO posts (title, slug, description, content) VALUES ("${data.title}", "${data.slug}", "${data.description}", "${data.content}");`)
+      const result = await pool.query(
+        "INSERT INTO posts (title, slug, description, content) VALUES (?, ?, ?, ?);",
+        [data.title, data.slug, data.description, data.content],
+      );
       return result;
-    } catch(e) {
-      throw new Error(e)
+    } catch (e) {
+      throw new Error(e);
     }
+  },
+
+  async count() {
+    const [rows] = await pool.query(`SELECT COUNT(*) AS count FROM posts;`);
+    return rows[0].count;
   },
 };
 
