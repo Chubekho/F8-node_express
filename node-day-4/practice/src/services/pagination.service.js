@@ -4,10 +4,10 @@ class PaginationService {
       throw new Error("Model is required for PaginationService");
     }
 
-    service.pagination = async (page, limit) => {
+    service.pagination = async (page, limit = 10, condition) => {
       const offset = (page - 1) * limit;
 
-      const rows = await service.model.findAll(limit, offset);
+      const rows = await service.model.findAll(limit, offset, condition);
       const count = await service.model.count();
 
       const pagination = {

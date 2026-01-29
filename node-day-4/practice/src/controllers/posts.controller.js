@@ -3,7 +3,10 @@ const postsService = require("../services/posts.service");
 
 const getAll = async (req, res) => {
   const page = +req.query.page || 1;
-  const result = await postsService.pagination(page, limit = 8);
+  const result = await postsService.pagination(page, 8, {
+    user_id: req.query.user_id,
+    slug: req.query.slug
+  });
   res.paginate(result);
 };
 
