@@ -4,10 +4,10 @@ class PaginationService {
       throw new Error("Model is required for PaginationService");
     }
     service.pagination = async (page, condition) => {
-      let limit = parseInt(condition.limit) === NaN ? 20 : parseInt(condition.limit);
-
-      if (limit > 500) {
-        limit = 500;
+      let limit = 20;
+      if (condition.limit) {
+        limit =
+          parseInt(condition.limit) < 600 ? parseInt(condition.limit) : 500;
       }
 
       const offset = (page - 1) * limit;
