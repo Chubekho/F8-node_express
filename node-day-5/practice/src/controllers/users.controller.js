@@ -1,10 +1,17 @@
 const userModel = require("../models/user.model");
+const postModel = require("../models/post.model")
 const usersService = require("../services/users.service");
 
 const getAll = async (req, res) => {
   const page = +req.query.page || 1;
-  const result = await usersService.pagination(page);
+  const result = await usersService.pagination(page, 10, {});
   res.paginate(result);
+};
+
+const getUserPosts = async (req, res) => {
+  const userId = +req.params.id;
+  let userPosts = await postModel.findPostByUserId(userId);
+  res.success(userPosts);
 };
 
 const getOne = async (req, res) => {
@@ -28,4 +35,4 @@ const createOne = async (req, res) => {
   res.success(newuser, 201);
 };
 
-module.exports = { getAll, getOne, createOne };
+module.exports = { getAll, getUserPosts, getOne, createOne };

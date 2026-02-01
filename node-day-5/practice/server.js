@@ -1,4 +1,7 @@
+require("dotenv").config();
 const express = require("express");
+const app = express();
+
 const cors = require("cors");
 
 const appRoute = require("./src/routes");
@@ -6,8 +9,6 @@ const response = require("./src/middlewares/response.middleware");
 const errorHandler = require("./src/middlewares/errorHandler.middleware");
 const notFound = require("./src/middlewares/notFound.middleware");
 
-const port = 3000;
-const app = express();
 const allowedOrigins = ["http://localhost:5173", "https://chubekho.github.io"];
 
 const corsOptions = {
@@ -22,6 +23,7 @@ const corsOptions = {
   optionsSuccessStatus: 200,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 };
+const port = process.env.SERVER_PORT;
 
 app.use(cors(corsOptions));
 
@@ -33,12 +35,6 @@ app.use("/api", appRoute);
 //demo error handling voi errorHandlerMiddleware
 app.get("/", (req, res) => {
   throw new Error("CRASHED");
-});
-
-app.post("/", (req, res) => {
-  console.log(req.body);
-
-  res.success("hello");
 });
 
 app.use(notFound);

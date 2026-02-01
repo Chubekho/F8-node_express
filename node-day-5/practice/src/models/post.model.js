@@ -5,14 +5,22 @@ const postModel = {
     const queryStr = Object.entries(condition)
       .filter(([_, value]) => value !== void 0)
       .map(([key, value]) => {
-        return `${key}=${value}`
+        return `${key}=${value}`;
       })
-      .join(" AND ")
+      .join(" AND ");
 
-      // console.log(`SELECT * FROM posts ${queryStr ? `where ${queryStr}` : ""} limit ${limit} offset ${offset}`);
+    // console.log(`SELECT * FROM posts ${queryStr ? `where ${queryStr}` : ""} limit ${limit} offset ${offset}`);
     const [rows] = await pool.query(
       `SELECT * FROM posts ${queryStr ? `where ${queryStr}` : ""} limit ? offset ?`,
       [limit, offset],
+    );
+    return rows;
+  },
+
+  async findPostByUserId(userId) {
+    const [rows] = await pool.query(
+      `SELECT * FROM posts WHERE id IN (SELECT post_id FROM user_post WHERE user_id = ?)`,
+      [userId],
     );
     return rows;
   },

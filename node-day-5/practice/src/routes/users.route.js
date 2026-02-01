@@ -4,6 +4,8 @@ const usersController = require("../controllers/users.controller");
 
 // [GET] /api/users/
 router.get("/", usersController.getAll);
+// [GET] /api/user/:id/post
+router.get("/:id/posts", usersController.getUserPosts)
 // [GET] /api/users/:id
 router.get("/:id", usersController.getOne);
 // [user] /api/users/

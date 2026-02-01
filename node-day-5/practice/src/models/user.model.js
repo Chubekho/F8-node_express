@@ -1,10 +1,16 @@
 const pool = require("../config/database");
 
 const userModel = {
-  async findAll(limit, offset) {
-    
+  async findAll(limit, offset, condition = {}) {
+    const queryStr = Object.entries(condition)
+      .filter(([_, value]) => value !== void 0)
+      .map(([key, value]) => {
+        return `${key}=${value}`;
+      })
+      .join(" AND ");
+
     const [rows] = await pool.query(
-      "SELECT * FROM users limit ? offset ?",
+      `SELECT * FROM posts ${queryStr ? `where ${queryStr}` : ""} limit ? offset ?`,
       [limit, offset],
     );
     return rows;
