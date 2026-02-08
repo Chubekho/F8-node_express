@@ -1,41 +1,25 @@
-const pool = require("../config/database");
+const pool = require("../configs/database");
 
 const userModel = {
-  async findAll(limit, offset, condition = {}) {
-    const queryStr = Object.entries(condition)
-      .filter(([_, value]) => value !== void 0)
-      .map(([key, value]) => {
-        return `${key}=${value}`;
-      })
-      .join(" AND ");
-
-    const [rows] = await pool.query(
-      `SELECT * FROM posts ${queryStr ? `where ${queryStr}` : ""} limit ? offset ?`,
-      [limit, offset],
-    );
-    return rows;
-  },
-
   async findOne(id) {
-    const [rows] = await pool.query("select * from users where id = ?", [id]);
+    const [rows] = await pool.query("select id, email, create_at from users where id = ?", [id]);
     return rows[0];
   },
 
-  async insertOne(data) {
-    try {
-      const result = await pool.query(
-        "INSERT INTO users (title, slug, description, content) VALUES (?, ?, ?, ?);",
-        [data.title, data.slug, data.description, data.content],
-      );
-      return result;
-    } catch (e) {
-      throw new Error(e);
-    }
+  async createOne(email, password) {
+    const [rows] = await pool.query(
+      "INSERT INTO users (email, password) VALUES (?, ?)",
+      [email, password],
+    );
+    return rows.insertId;
   },
 
-  async count() {
-    const [rows] = await pool.query(`SELECT COUNT(*) AS count FROM users;`);
-    return rows[0].count;
+  async findUserByEmailAndPassword(email, password) {
+    const [rows] = await pool.query(
+      "SELECT id, email, create_at FROM users WHERE email = ? AND password = ?",
+      [email, password],
+    );
+    return rows[0];
   },
 };
 
