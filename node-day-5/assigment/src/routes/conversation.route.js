@@ -1,8 +1,10 @@
 const express = require("express");
+const conversationController = require("../controllers/conversation.controller");
+const auth = require("../middlewares/auth.middleware");
 const router = express.Router();
 
 // GET /api/conversations
-router.get("/", () => {});
+router.get("/", auth, conversationController.getAllCurrentUserConversation);
 
 // POST /api/conversations
 router.post("/", () => {});
