@@ -1,6 +1,7 @@
 const response = (_, res, next) => {
   res.success = (data, statusCode = 200, passProp) => {
     res.status(statusCode).json({
+      status: "success",
       data,
       ...passProp,
     });
