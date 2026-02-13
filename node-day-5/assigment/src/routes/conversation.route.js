@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/", auth, conversationController.getAllCurrentUserConversation);
 
 // POST /api/conversations
-router.post("/", () => {});
+router.post("/", auth, conversationController.createConversation);
 
 // POST /api/conversations/:id/participants
 router.post("/:id/participants", () => {});

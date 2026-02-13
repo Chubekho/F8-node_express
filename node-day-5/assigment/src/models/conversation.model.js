@@ -18,6 +18,14 @@ const conversationModel = {
     return rows;
   },
 
+  async insertOne(create_by, name, type) {
+    const [rows] = await pool.query(
+      "INSERT INTO conversations(created_by, name, type) VALUES (?, ?, ?)",
+      [create_by, name, type],
+    );
+    return rows.insertId;
+  },
+
   async count(condition) {
     const { userId } = condition;
 
