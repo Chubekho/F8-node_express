@@ -8,34 +8,22 @@ class UserService {
     const existingUser = await userModel.findByEmail(email);
 
     if (existingUser) {
-      return null;
+      throw new Error("USER_EXISTED");
     }
 
-    const newUserId = await userModel.createOne(email, password);
-    return newUserId;
+    return await userModel.createOne(email, password);
   }
 
   async login(email, password) {
-    let loginData = {};
     const user = await userModel.findByEmailAndPassword(email, password);
-    if (!user) {
-      return loginData;
-    }
+    if (!user) return null;
 
-    const payload = {
-      sub: user.id,
-      exp: Date.now() + 3600 * 1000,
+    const token = jwt.sign({ sub: user.id }, secret, { expiresIn: "1h" });
+
+    return {
+      user,
+      loginToken: { access_token: token, access_token_ttl: 3600 },
     };
-
-    const { secret } = require("../configs/jwt");
-    const token = jwt.sign(payload, secret);
-    loginData.user = user;
-    loginData.loginToken = {
-      access_token: token,
-      access_token_ttl: 3600,
-    };
-
-    return loginData;
   }
 }
 
