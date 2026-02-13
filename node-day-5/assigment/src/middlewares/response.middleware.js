@@ -7,11 +7,17 @@ const response = (_, res, next) => {
     });
   };
 
-  res.error = (error, statusCode = 500) => {
-    res.status(statusCode).json({
+  res.error = (message, statusCode = 500, errorDetails = null) => {
+    const responseData = {
       status: "error",
-      error,
-    });
+      message,
+    };
+
+    if (errorDetails) {
+      responseData.error = errorDetails;
+    }
+
+    res.status(statusCode).json(responseData);
   };
   next();
 };

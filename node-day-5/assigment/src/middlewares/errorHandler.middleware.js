@@ -1,18 +1,21 @@
 const { JsonWebTokenError } = require("jsonwebtoken");
 
 const errorHandler = (err, req, res, next) => {
-  let status;
+  let statusCode = err.statusCode || 500;
+  let message = err.message || "Internal Server Error";
 
   if (err instanceof JsonWebTokenError) {
-    err = "Unauthorized";
-    status = 401;
+    statusCode = 401;
+    message = "Unauthorized: Invalid Token";
+  }
+  if (err instanceof TokenExpiredError) {
+    statusCode = 401;
+    message = "Unauthorized: Token Expired";
   }
 
   res.error(
-    {
-      message: String(err),
-    },
-    status,
+    message,
+    statusCode,
   );
 };
 
