@@ -19,7 +19,7 @@ const userModel = {
 
   async findByEmail(email) {
     const [rows] = await pool.query(
-      "SELECT id, email, create_at FROM users where email = ? ",
+      "SELECT id, password, email, create_at FROM users where email = ? ",
       [email],
     );
     return rows[0];
