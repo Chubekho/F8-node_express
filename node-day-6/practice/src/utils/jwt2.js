@@ -5,7 +5,12 @@ const toBase64URL = (obj) => {
   return Buffer.from(JSON.stringify(obj)).toString("base64url");
 };
 
-const sign = (header, payload, secret) => {
+const sign = (payload, secret) => {
+  const header = {
+    alg: "HS256",
+    typ: "JWT",
+  };
+  
   const base64Header = toBase64URL(header);
   const base64Payload = toBase64URL(payload);
 

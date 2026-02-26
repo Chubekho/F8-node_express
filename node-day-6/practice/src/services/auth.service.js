@@ -36,11 +36,6 @@ class AuthService {
       throw error;
     }
 
-    const header = {
-      alg: "HS256",
-      typ: "JWT",
-    };
-
     const TTL_SECONDS = 300; // 5 phút
     const now = Math.floor(Date.now() / 1000);
 
@@ -53,10 +48,10 @@ class AuthService {
     const token2 = jwt2.sign(header, payload, secret);
     // const token = jwt.sign({ sub: user.id }, secret, { expiresIn: "5m" });
 
-    const { password, ...userWithoutPassword } = user;
+    const { password, ...safeUserData } = user;
 
     return {
-      userWithoutPassword,
+      safeUserData,
       loginToken: { access_token: token2, access_token_ttl: TTL_SECONDS },
     };
   }
