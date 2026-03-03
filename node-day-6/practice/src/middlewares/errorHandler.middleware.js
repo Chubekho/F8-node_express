@@ -13,10 +13,12 @@ const errorHandler = (err, req, res, next) => {
     message = "Unauthorized: Token Expired";
   }
 
-  res.error(
-    message,
-    statusCode,
-  );
+  if (err.message === "USER_EXISTED") {
+    statusCode = 409;
+    message = "Email existed!";
+  }
+
+  res.error(message, statusCode);
 };
 
 module.exports = errorHandler;

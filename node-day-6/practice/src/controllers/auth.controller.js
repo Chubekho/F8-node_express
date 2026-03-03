@@ -8,8 +8,6 @@ const authController = {
       const newUserId = await authService.register(email, password);
       res.success({ id: newUserId, email }, 201);
     } catch (err) {
-      if (err.message === "USER_EXISTED")
-        return res.error("Email existed!", 409);
       next(err);
     }
   },
@@ -34,8 +32,8 @@ const authController = {
       const refreshToken = req.body.refresh_token;
       const refreshData = await authService.refreshToken(refreshToken);
       res.success(refreshData.loginToken, 200);
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 };
