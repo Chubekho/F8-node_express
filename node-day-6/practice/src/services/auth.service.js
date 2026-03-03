@@ -5,8 +5,14 @@ const userModel = require("../models/user.model");
 const { secret } = require("../configs/jwt");
 const jwt2 = require("../utils/jwt2");
 const strings = require("../utils/strings");
+const {
+  BCRYPT_SALT_ROUNDS,
+  HTTP_STATUS,
+  ACCESS_TOKEN_TTL_SECONDS,
+  REFRESH_TOKEN_TTL_DAYS,
+} = require("../configs/constants");
 
-const saltRounds = 10;
+const saltRounds = BCRYPT_SALT_ROUNDS;
 
 class AuthService {
   model = userModel;
@@ -33,7 +39,7 @@ class AuthService {
 
     if (!isMatch) {
       const error = new Error("Wrong email or password");
-      error.statusCode = 401;
+      error.statusCode = HTTP_STATUS.UNAUTHORIZED;
       throw error;
     }
 
@@ -44,7 +50,7 @@ class AuthService {
     const user = await userModel.findByRefreshToken(token);
     if (!user) {
       const error = new Error("Unauthorized");
-      error.statusCode = 401;
+      error.statusCode = HTTP_STATUS.UNAUTHORIZED;
       throw error;
     }
 
@@ -53,19 +59,18 @@ class AuthService {
 }
 
 const responseWithToken = async (user) => {
-  const TTL_SECONDS = 15; // 15s
-  const now = Math.floor(Date.now() / 1000); //in seconds
+  const now = Math.floor(Date.now() / 1000); // in seconds
 
   const payload = {
     sub: user.id,
     iat: now,
-    exp: now + TTL_SECONDS, // 15s
+    exp: now + ACCESS_TOKEN_TTL_SECONDS,
   };
 
   const accessToken = jwt2.sign(payload, secret);
   // const token = jwt.sign({ sub: user.id }, secret, { expiresIn: "15s" });
   const refreshToken = strings.createRandomString(20);
-  const refreshTokenTTL = 60 * 60 * 24 * 30; // 30days
+  const refreshTokenTTL = 60 * 60 * 24 * REFRESH_TOKEN_TTL_DAYS; // 30days
   const refreshTokenExpiresAt = new Date(Date.now() + refreshTokenTTL * 1000);
 
   await userModel.updateRefreshToken(

@@ -1,4 +1,4 @@
-const userModel = require("../models/user.model");
+const { HTTP_STATUS } = require("../configs/constants");
 const authService = require("../services/auth.service");
 
 const authController = {
@@ -6,7 +6,7 @@ const authController = {
     try {
       const { email, password } = req.body;
       const newUserId = await authService.register(email, password);
-      res.success({ id: newUserId, email }, 201);
+      res.success({ id: newUserId, email }, HTTP_STATUS.CREATED);
     } catch (err) {
       next(err);
     }
@@ -17,7 +17,7 @@ const authController = {
       const { email, password } = req.body;
       const loginData = await authService.login(email, password);
 
-      res.success(loginData.safeUserData, 200, loginData.loginToken);
+      res.success(loginData.safeUserData, HTTP_STATUS.OK , loginData.loginToken);
     } catch (err) {
       next(err);
     }
@@ -31,7 +31,7 @@ const authController = {
     try {
       const refreshToken = req.body.refresh_token;
       const refreshData = await authService.refreshToken(refreshToken);
-      res.success(refreshData.loginToken, 200);
+      res.success(refreshData.loginToken, HTTP_STATUS.OK);
     } catch (err) {
       next(err);
     }
