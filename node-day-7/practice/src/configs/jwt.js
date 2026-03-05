@@ -1,5 +1,6 @@
 const jwt = {
-    secret: process.env.JWT_SECRET
-}
+  authSecret: process.env.AUTH_JWT_SECRET,
+  emailVerifySecret: process.env.VERIFY_JWT_SECRET,
+};
 
 module.exports = jwt;

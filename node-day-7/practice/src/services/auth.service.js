@@ -2,7 +2,8 @@
 const bcrypt = require("bcrypt");
 
 const userModel = require("../models/user.model");
-const { secret } = require("../configs/jwt");
+const emailService = require("./email.service");
+const { authSecret, emailVerifySecret } = require("../configs/jwt");
 const jwt2 = require("../utils/jwt2");
 const strings = require("../utils/strings");
 const {
@@ -26,6 +27,9 @@ class AuthService {
 
     const hashedPassword = await bcrypt.hash(plaintextPassword, saltRounds);
     const newUserId = await userModel.createOne(email, hashedPassword);
+
+    const verifyToken = jwt2.sign({ sub: newUserId }, emailVerifySecret);
+    await emailService.sendVerifyEmail(email, "Xác thực email", verifyToken);
 
     return newUserId;
   }
@@ -67,7 +71,7 @@ const responseWithToken = async (user) => {
     exp: now + ACCESS_TOKEN_TTL_SECONDS,
   };
 
-  const accessToken = jwt2.sign(payload, secret);
+  const accessToken = jwt2.sign(payload, authSecret);
   // const token = jwt.sign({ sub: user.id }, secret, { expiresIn: "15s" });
   const refreshToken = strings.createRandomString(20);
   const refreshTokenTTL = 60 * 60 * 24 * REFRESH_TOKEN_TTL_DAYS; // 30days
