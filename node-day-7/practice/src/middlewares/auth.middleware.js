@@ -11,7 +11,7 @@ const auth = async (req, res, next) => {
   }
 
   const accessToken = bearerToken.split(" ")[1];
-  const payload = jwt2.verify(accessToken, secret);
+  const payload = jwt2.verify(accessToken, authSecret);
   const currentUser = await userModel.findById(payload.sub);
 
   if (!currentUser) {

@@ -11,7 +11,7 @@ const userModel = {
 
   async findById(id) {
     const [rows] = await pool.query(
-      "SELECT id, email, create_at FROM users where id = ? ",
+      "SELECT id, email, username, verify_at, create_at FROM users where id = ? ",
       [id],
     );
     return rows[0];

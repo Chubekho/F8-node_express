@@ -89,7 +89,7 @@ const responseWithToken = async (user) => {
     safeUserData,
     loginToken: {
       access_token: accessToken,
-      access_token_ttl: TTL_SECONDS,
+      access_token_ttl: ACCESS_TOKEN_TTL_SECONDS,
       refresh_token: refreshToken,
       refresh_token_ttl: refreshTokenTTL,
     },

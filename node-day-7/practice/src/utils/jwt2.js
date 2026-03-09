@@ -1,5 +1,4 @@
 const crypto = require("crypto");
-const { authSecret } = require("../configs/jwt");
 
 const toBase64URL = (obj) => {
   return Buffer.from(JSON.stringify(obj)).toString("base64url");
