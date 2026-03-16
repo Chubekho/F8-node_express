@@ -22,21 +22,24 @@ class AuthService {
     const existingUser = await userModel.findByEmail(email);
 
     if (existingUser) {
-      throw new Error("USER_EXISTED");
+      const error = new Error("Email existed");
+      error.statusCode = HTTP_STATUS.CONFLICT;
+      throw error;
     }
 
     const hashedPassword = await bcrypt.hash(plaintextPassword, saltRounds);
     const newUserId = await userModel.createOne(email, hashedPassword);
-
-    const verifyToken = jwt2.sign({ sub: newUserId }, emailVerifySecret);
-    await emailService.sendVerifyEmail(email, "Xác thực email", verifyToken);
+    const newUser = {
+      id: newUserId,
+      email
+    }
+    await emailService.sendVerifyEmail(newUser);
 
     return newUserId;
   }
 
   async login(email, plainPassword) {
     const user = await userModel.findByEmail(email);
-
     const isMatch = user
       ? await bcrypt.compare(plainPassword, user.password)
       : false;
@@ -59,6 +62,32 @@ class AuthService {
     }
 
     return await responseWithToken(user);
+  }
+
+  async verifyEmail(token) {
+    const payload = jwt2.verify(token, emailVerifySecret);
+    const user = await userModel.findById(payload.sub);
+
+    if (user.verify_at) {
+      const error = new Error("Email has been verified");
+      error.statusCode = HTTP_STATUS.CONFLICT;
+      throw error;
+    }
+    const now = new Date(Date.now());
+
+    await userModel.updateVerifyAt(payload.sub, now);
+    return "Email verified successfully";
+  }
+
+  async resendVerifyEmail(user) {
+    if (user.verify_at) {
+      const error = new Error("Email has been verified");
+      error.statusCode = HTTP_STATUS.CONFLICT;
+      throw error;
+    }
+
+    await emailService.sendVerifyEmail(user);
+    return "A verification email has been sent to your email";
   }
 }
 

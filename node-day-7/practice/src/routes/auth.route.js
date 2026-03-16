@@ -12,4 +12,8 @@ router.post("/login", authController.login);
 router.post("/refresh-token", authController.refreshToken);
 // GET /api/auth/me
 router.get("/me", auth, authController.getCurrentUser);
+// POST /api/auth/verify-email
+router.post("/verify-email", authController.verifyEmail);
+//POST /api/auth/resend-verify-email
+router.post("/resend-verify-email", auth, authController.resendVerifyEmail)
 module.exports = router;

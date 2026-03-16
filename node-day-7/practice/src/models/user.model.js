@@ -19,7 +19,7 @@ const userModel = {
 
   async findByEmail(email) {
     const [rows] = await pool.query(
-      "SELECT id, password, email, create_at FROM users where email = ? ",
+      "SELECT id, email, username, password, verify_at, create_at FROM users where email = ? ",
       [email],
     );
     return rows[0];
@@ -27,7 +27,7 @@ const userModel = {
 
   async findByEmailAndPassword(email, password) {
     const [rows] = await pool.query(
-      "SELECT id, email, create_at FROM users WHERE email = ? AND password = ?",
+      "SELECT id, email, username, verify_at, create_at FROM users WHERE email = ? AND password = ?",
       [email, password],
     );
     return rows[0];
@@ -45,7 +45,13 @@ const userModel = {
     const query =
       "SELECT * FROM users WHERE refresh_token = ? AND refresh_expires_at > NOW()";
     const [rows] = await pool.query(query, [token]);
-    return rows[0];
+    return rows.verify_at;
+  },
+
+  async updateVerifyAt(id) {
+    const query = "UPDATE users SET verify_at = now() WHERE id = ?";
+    const [{ affectedRows }] = await pool.query(query, [id]);
+    return affectedRows;
   },
 };
 

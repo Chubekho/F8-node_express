@@ -17,7 +17,7 @@ const authController = {
       const { email, password } = req.body;
       const loginData = await authService.login(email, password);
 
-      res.success(loginData.safeUserData, HTTP_STATUS.OK , loginData.loginToken);
+      res.success(loginData.safeUserData, HTTP_STATUS.OK, loginData.loginToken);
     } catch (err) {
       next(err);
     }
@@ -32,6 +32,30 @@ const authController = {
       const refreshToken = req.body.refresh_token;
       const refreshData = await authService.refreshToken(refreshToken);
       res.success(refreshData.loginToken, HTTP_STATUS.OK);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  async verifyEmail(req, res, next) {
+    try {
+      const token = req.body.token;
+      if (!token) {
+        throw new Error("Invalid token");
+      }
+
+      const message = await authService.verifyEmail(token);
+      res.success(message);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  async resendVerifyEmail(req, res, next) {
+    try {
+      const user = req.user;
+      const message = await authService.resendVerifyEmail(user);
+      res.success(message)
     } catch (err) {
       next(err);
     }
