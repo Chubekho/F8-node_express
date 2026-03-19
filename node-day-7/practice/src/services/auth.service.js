@@ -12,6 +12,7 @@ const {
   ACCESS_TOKEN_TTL_SECONDS,
   REFRESH_TOKEN_TTL_DAYS,
 } = require("../configs/constants");
+const queueService = require("./queue.service");
 
 const saltRounds = BCRYPT_SALT_ROUNDS;
 
@@ -31,9 +32,14 @@ class AuthService {
     const newUserId = await userModel.createOne(email, hashedPassword);
     const newUser = {
       id: newUserId,
-      email
-    }
-    await emailService.sendVerifyEmail(newUser);
+      email,
+    };
+
+    // await emailService.sendVerifyEmail(newUser);
+    queueService.push({
+      type: "sendVerifyEmail",
+      payload: newUser,
+    });
 
     return newUserId;
   }
