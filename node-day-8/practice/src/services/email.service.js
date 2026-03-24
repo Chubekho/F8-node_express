@@ -21,6 +21,22 @@ class EmailService {
     });
     return info;
   }
+
+  async sendDailyReport(email, subject, userCount) {
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+    const preDate = date.toISOString().slice(0, 10);
+
+    const info = await transporter.sendMail({
+      from: '"Mr.Epstein" <donaldtheduck@gmail.com>',
+      to: email,
+      subject,
+      html: `<h1>Báo cáo hằng ngày- ${preDate}</h1>
+        <p>Số lượng người đăng ký mới: ${userCount}</p>
+      `,
+    });
+    return info;
+  }
 }
 
 module.exports = new EmailService();

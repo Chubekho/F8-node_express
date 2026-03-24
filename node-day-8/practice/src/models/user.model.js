@@ -31,6 +31,16 @@ const userModel = {
     return rows[0];
   },
 
+  async countNewUser() {
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+    const preDate = date.toISOString().slice(0, 10);
+    const [rows] = await pool.query(
+      "SELECT COUNT(*) AS count FROM users WHERE create_at BETWEEN ? AND ?", [`${preDate} 00:00:00`, `${preDate} 23:59:59`]
+    );
+    return rows[0].count
+  },
+
   async createOne(email, password) {
     const [rows] = await pool.query(
       "INSERT INTO users(email, password) VALUES (?, ?)",
