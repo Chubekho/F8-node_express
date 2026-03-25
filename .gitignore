@@ -5,3 +5,6 @@ node_modules/
 note.txt
 backupDB/
 test.js
+
+#prisma
+generated/
