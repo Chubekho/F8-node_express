@@ -1,0 +1,22 @@
+const constants = {
+    httpCodes: {
+        //SUCCESS
+        ok: 200,
+        created: 201,
+        noContent: 204,
+
+        //CLIENT ERROR
+        badRequest: 400,
+        unauthorized: 401,
+        forbidden: 403,
+        notFound: 404,
+        conflict: 409,
+        unprocessableContent: 422,
+        tooManyRequests: 429,
+
+        //SERVER ERROR
+        internalServerError: 500,
+    }
+}
+
+module.exports = constants
