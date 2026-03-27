@@ -8,26 +8,56 @@ datasource db {
 }
 
 model User {
-  id       BigInt   @id @default(autoincrement())
-  email    String   @unique
-  name     String?
+  id            BigInt    @id @default(autoincrement())
+  userame       String?   @unique
+  email         String    @unique
+  password      String
+  firstName     String
+  lastName      String
+  avatar        String?
+  bio           String?
+  websiteUrl    String?
+  githubUrl     String?
+  isVerify      Boolean   @default(false)
+  emailVerifyAt DateTime?
+  createAt      DateTime  @default(now())
+  updateAt      DateTime  @updatedAt
+  deleteAt      DateTime?
+
   posts    Post[]
-  createAt DateTime
-  deleteAt DateTime
+  comments Comment[]
 
   @@map("users")
 }
 
 model Post {
-  id          BigInt   @id @default(autoincrement())
-  title       String
-  slug        String   @unique
-  content     String?  @db.Text
-  user        User     @relation(fields: [userId], references: [id])
+  id          BigInt    @id @default(autoincrement())
   userId      BigInt
-  publishedAt DateTime
-  createAt    DateTime
-  deleteAt    DateTime
+  title       String
+  slug        String    @unique
+  description String    @db.Text
+  content     String    @db.Text
+  image       String
+  minRead     Int?
+  publishedAt DateTime?
+  createAt    DateTime  @default(now())
+  updateAt    DateTime  @updatedAt
+  deleteAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id])
 
   @@map("posts")
+}
+
+model Comment {
+  id       BigInt    @id @default(autoincrement())
+  userId   BigInt
+  content  String
+  createAt DateTime  @default(now())
+  updateAt DateTime  @updatedAt
+  deleteAt DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("comments")
 }
