@@ -22,4 +22,8 @@ const login = async (req, res) => {
   res.success(userLoginData, 200);
 };
 
-module.exports = { register, login };
+const getCurrentUser = async (req, res) => {
+  res.success(req.auth.user);
+};
+
+module.exports = { register, login, getCurrentUser };

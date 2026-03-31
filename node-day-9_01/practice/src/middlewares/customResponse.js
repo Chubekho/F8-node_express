@@ -8,8 +8,12 @@ function customResponse(req, res, next) {
       data,
     });
   };
-  
-  res.error = (message, statusCode = 500, errorDetails = null) => {
+
+  res.error = (
+    message,
+    statusCode = httpCodes.internalServerError,
+    errorDetails = null,
+  ) => {
     const responseData = {
       status: "error",
       message,
@@ -20,6 +24,15 @@ function customResponse(req, res, next) {
     }
 
     res.status(statusCode).json(responseData);
+  };
+
+  res.notFound = () => {
+    res.error("Resource Not Found", httpCodes.notFound);
+  };
+
+  //unauthorized
+  res.unauthorized = () => {
+    res.error("Unauthorized", httpCodes.unauthorized);
   };
 
   next();

@@ -1,6 +1,11 @@
 const prisma = require("@/libs/prisma");
 
 class UserService {
+  async getById(id) {
+    const user = await prisma.user.findUnique({ where: { id } });
+    return user;
+  }
+
   async getAll() {
     const users = await prisma.user.findMany({
       select: {

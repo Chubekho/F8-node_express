@@ -19,18 +19,6 @@ class AuthService {
     return newUserData;
   }
 
-  generateAccessToken(user) {
-    const accessToken = jwt.sign(
-      {
-        sub: user.id,
-      },
-      authConfig.jwtSecret,
-      { expiresIn: authConfig.accessTokenTTL },
-    );
-
-    return accessToken;
-  }
-
   async login(email, password) {
     const existedUser = await prisma.user.findUnique({
       where: { email },
@@ -49,6 +37,35 @@ class AuthService {
     const { password: newPassword, ...newUserData } = existedUser;
 
     return newUserData;
+  }
+
+  async getUserById(id) {
+    const user = await prisma.user.findUnique({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        isVerify: true,
+        emailVerifyAt: true,
+      },
+      where: { id },
+    });
+    return user;
+  }
+
+  generateAccessToken(user) {
+    const accessToken = jwt.sign(
+      {
+        sub: user.id,
+      },
+      authConfig.jwtSecret,
+      { expiresIn: authConfig.accessTokenTTL },
+    );
+
+    return accessToken;
   }
 }
 
