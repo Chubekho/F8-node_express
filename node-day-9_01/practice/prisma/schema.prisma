@@ -9,20 +9,20 @@ datasource db {
 
 model User {
   id            BigInt    @id @default(autoincrement())
-  userame       String?   @unique
+  username       String?   @unique
   email         String    @unique
   password      String
-  firstName     String
-  lastName      String
+  firstName     String?
+  lastName      String?
   avatar        String?
   bio           String?
   websiteUrl    String?
   githubUrl     String?
   isVerify      Boolean   @default(false)
   emailVerifyAt DateTime?
-  createAt      DateTime  @default(now())
-  updateAt      DateTime  @updatedAt
-  deleteAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
 
   posts    Post[]
   comments Comment[]
@@ -40,9 +40,9 @@ model Post {
   image       String
   minRead     Int?
   publishedAt DateTime?
-  createAt    DateTime  @default(now())
-  updateAt    DateTime  @updatedAt
-  deleteAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
 
   user User @relation(fields: [userId], references: [id])
 
@@ -53,9 +53,9 @@ model Comment {
   id       BigInt    @id @default(autoincrement())
   userId   BigInt
   content  String
-  createAt DateTime  @default(now())
-  updateAt DateTime  @updatedAt
-  deleteAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   user User @relation(fields: [userId], references: [id])
 

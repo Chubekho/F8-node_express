@@ -8,7 +8,7 @@ readdirSync(__dirname)
   .filter((route) => route.endsWith(postfix))
   .forEach((fileName) => {
     const resource = fileName.replace(postfix, "")
-    router.use(`/${resource}s`, require(`./${fileName}`));
+    router.use(`/${resource}`, require(`./${fileName}`));
   });
 
 module.exports = router;

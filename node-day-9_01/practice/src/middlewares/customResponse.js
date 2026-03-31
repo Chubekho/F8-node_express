@@ -8,12 +8,20 @@ function customResponse(req, res, next) {
       data,
     });
   };
-  res.error = (message, status = httpCodes.internalServerError) => {
-    res.status(status).json({
+  
+  res.error = (message, statusCode = 500, errorDetails = null) => {
+    const responseData = {
       status: "error",
       message,
-    });
+    };
+
+    if (errorDetails) {
+      responseData.error = errorDetails;
+    }
+
+    res.status(statusCode).json(responseData);
   };
+
   next();
 }
 

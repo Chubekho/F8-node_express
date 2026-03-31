@@ -5,7 +5,7 @@ class UserService {
     const users = await prisma.user.findMany({
       select: {
         id: true,
-        name: true,
+        username: true,
         email: true,
         posts: {
           select: {

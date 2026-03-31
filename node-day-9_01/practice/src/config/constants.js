@@ -16,6 +16,9 @@ const constants = {
 
         //SERVER ERROR
         internalServerError: 500,
+    },
+    prismaCode: {
+        duplicate: "P2002"
     }
 }
 
