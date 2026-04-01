@@ -1,7 +1,5 @@
 const jwt = require("jsonwebtoken");
 const { jwtSecret } = require("../config/auth");
-const prisma = require("../libs/prisma");
-const userService = require("../services/user.service");
 const authService = require("../services/auth.service");
 
 const authRequire = async (req, res, next) => {

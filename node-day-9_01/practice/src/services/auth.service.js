@@ -3,10 +3,11 @@ const prisma = require("@/libs/prisma");
 const jwt = require("jsonwebtoken");
 const constants = require("@/config/constants");
 const authConfig = require("@/config/auth");
+const generateString = require("../utils/generateString");
 const { httpCodes } = constants;
 
 class AuthService {
-  async register(email, password) {
+  async handleRegister(email, password, userAgent) {
     const hash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {
@@ -14,12 +15,13 @@ class AuthService {
         password: hash,
       },
     });
-    const { password: newPassword, ...newUserData } = user;
 
-    return newUserData;
+    const userTokens = await this.generateUserTokens(user, userAgent);
+
+    return [null, userTokens];
   }
 
-  async login(email, password) {
+  async handleLogin(email, password, userAgent) {
     const existedUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -28,15 +30,37 @@ class AuthService {
       ? await bcrypt.compare(password, existedUser.password)
       : false;
 
-    if (!isMatch) {
-      const error = new Error("Unathorized");
-      error.statusCode = httpCodes.unauthorized;
-      throw error;
-    }
+    if (!isMatch) return [true, null];
 
-    const { password: newPassword, ...newUserData } = existedUser;
+    const userTokens = await this.generateUserTokens(existedUser, userAgent);
 
-    return newUserData;
+    return [null, userTokens];
+  }
+
+  async handleRefreshToken(token, userAgent) {
+    const refreshToken = await prisma.refreshToken.findUnique({
+      where: {
+        token,
+        isRevoked: false,
+        expiresAt: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    if (!refreshToken) return [true, null]; // [isError, data (refreshToken)]
+
+    const user = { id: refreshToken.userId };
+    const userTokens = await this.generateUserTokens(user, userAgent);
+    await prisma.refreshToken.update({
+      where: {
+        id: refreshToken.id,
+      },
+      data: {
+        isRevoked: true,
+      },
+    });
+    return [null, userTokens];
   }
 
   async getUserById(id) {
@@ -66,6 +90,47 @@ class AuthService {
     );
 
     return accessToken;
+  }
+
+  async generateRefreshToken(user, userAgent) {
+    let refreshToken,
+      existed = false;
+
+    do {
+      refreshToken = generateString();
+      const count = await prisma.refreshToken.count({
+        where: {
+          token: refreshToken,
+        },
+      });
+
+      existed = count > 0;
+    } while (existed);
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + authConfig.refreshTokenTTL);
+
+    await prisma.refreshToken.create({
+      data: {
+        token: refreshToken,
+        userId: user.id,
+        userAgent,
+        expiresAt,
+      },
+    });
+
+    return refreshToken;
+  }
+
+  async generateUserTokens(user, userAgent) {
+    const accessToken = this.generateAccessToken(user);
+    const refreshToken = await this.generateRefreshToken(user, userAgent);
+
+    return {
+      accessToken,
+      accessTokenTTL: authConfig.accessTokenTTL,
+      refreshToken,
+    };
   }
 }
 

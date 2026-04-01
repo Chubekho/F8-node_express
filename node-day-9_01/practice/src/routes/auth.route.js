@@ -5,6 +5,7 @@ const authRequire = require("../middlewares/authRequire");
 
 router.post("/register", authController.register);
 router.post("/login", authController.login);
+router.post("/refresh-token", authController.refreshToken)
 router.get("/me", authRequire, authController.getCurrentUser)
 
 module.exports = router;
